@@ -76,7 +76,7 @@ def get_schedules(current_date: str) -> None | dict:
     return request
 
 
-def no_appointments_available(schedules: dict) -> bool:
+def are_appointments_available(schedules: dict) -> bool:
     for doctor_data in schedules["data"]:
         next_appointment = doctor_data["fechaProxima"]
         if next_appointment is not None:
@@ -102,11 +102,11 @@ def main():
     if login_token_updated_succesfully():
         current_date = get_current_day()
         schedules = get_schedules(current_date=current_date)
-        if no_appointments_available(schedules=schedules):
-            msg = "No hay citas disponibles para hoy ☹️"
-            send_telegram_message(message=msg)
+        if are_appointments_available(schedules=schedules):
+            parse_schedules(schedules=schedules, current_date=current_date)
             return
-        parse_schedules(schedules=schedules, current_date=current_date)
+        msg = "No hay citas disponibles para hoy ☹️"
+        send_telegram_message(message=msg)
 
 
 if __name__ == "__main__":
